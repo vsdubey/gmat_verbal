@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            questionDisplay.textContent = data.question;
+            questionDisplay.innerHTML = data.question.replace(/([A-Z]\))/g, '<li>$1</li>');
             answerDisplay.textContent = data.answer;
             answerDisplay.style.display = 'none'; // Hide answer initially
             showAnswerBtn.style.display = 'block'; // Show the "Show Answer" button
