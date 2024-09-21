@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import logging
+import os
 from ai_generator import generate_question
 
 app = Flask(__name__)
@@ -27,4 +28,5 @@ def generate_new_question():
     return jsonify({'error': 'Failed to generate question'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 4000))  # Use the PORT environment variable
+    app.run(host='0.0.0.0', port=port)  # Bind to the port
