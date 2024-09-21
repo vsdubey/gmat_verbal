@@ -17,17 +17,22 @@ def extract_questions_from_pdf(file_path):
                 text += page.extract_text()
 
         logger.info(f"Extracted {len(text)} characters from the PDF")
+        logger.info(f"First 1000 characters of extracted text: {text[:1000]}")
 
-        # Updated pattern to match various question formats
-        pattern = r"(Q\d+:|Question \d+:)\s*(.*?)\s*(A:|Answer:)\s*(.*?)(?=Q\d+:|Question \d+:|$)"
+        # More lenient regex pattern
+        pattern = r"(?:Q(?:uestion)?\s*\d+[:.]?\s*)(.*?)(?:A(?:nswer)?[:.]?\s*)(.*?)(?=Q(?:uestion)?\s*\d+[:.]?|$)"
         matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
 
         logger.info(f"Found {len(matches)} potential question-answer pairs")
 
-        for match in matches:
-            question = match[1].strip()
-            answer = match[3].strip()
+        for i, match in enumerate(matches, 1):
+            question = match[0].strip()
+            answer = match[1].strip()
             
+            logger.info(f"Processing pair {i}:")
+            logger.info(f"Question: {question[:100]}...")
+            logger.info(f"Answer: {answer[:100]}...")
+
             # Basic validation to ensure we have both question and answer
             if question and answer:
                 questions.append({
@@ -35,8 +40,9 @@ def extract_questions_from_pdf(file_path):
                     'answer': answer,
                     'difficulty': 'Medium'  # Default difficulty
                 })
+                logger.info(f"Added question-answer pair {i}")
             else:
-                logger.warning(f"Skipped invalid question-answer pair: Q: {question}, A: {answer}")
+                logger.warning(f"Skipped invalid question-answer pair {i}")
 
         logger.info(f"Successfully extracted {len(questions)} valid questions")
 

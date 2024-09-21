@@ -35,7 +35,9 @@ def add_question(question, answer, source, difficulty):
             (question, answer, source, difficulty)
         )
         conn.commit()
-        logger.info(f"Added question: {question[:50]}...")
+        logger.info(f"Added question: {question[:100]}...")
+        logger.info(f"Answer: {answer[:100]}...")
+        logger.info(f"Source: {source}, Difficulty: {difficulty}")
     except Exception as e:
         logger.error(f"Error adding question: {str(e)}")
     finally:
@@ -46,6 +48,10 @@ def get_random_question():
     conn = get_db_connection()
     cur = conn.cursor()
     try:
+        cur.execute("SELECT COUNT(*) FROM questions")
+        total_questions = cur.fetchone()[0]
+        logger.info(f"Total number of questions in the database: {total_questions}")
+
         cur.execute("SELECT * FROM questions ORDER BY RANDOM() LIMIT 1")
         question = cur.fetchone()
         if question:

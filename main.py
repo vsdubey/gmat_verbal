@@ -34,20 +34,22 @@ def upload_pdf():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        logger.info(f"File saved: {filepath}")
+        file_size = os.path.getsize(filepath)
+        logger.info(f"File saved: {filepath}, Size: {file_size} bytes")
         questions = extract_questions_from_pdf(filepath)
         for question in questions:
             add_question(question['question'], question['answer'], 'PDF', question.get('difficulty', 'Medium'))
         os.remove(filepath)
         logger.info(f"Processed {len(questions)} questions from {filename}")
         return jsonify({'message': f'Processed {len(questions)} questions from {filename}'}), 200
-    logger.warning("Invalid file type")
+    logger.warning(f"Invalid file type: {file.filename}")
     return jsonify({'error': 'Invalid file type'}), 400
 
 @app.route('/get_question', methods=['GET'])
 def get_question():
     question = get_random_question()
     if question:
+        logger.info(f"Retrieved question: ID {question[0]}")
         return jsonify({
             'id': question[0],
             'question': question[1],
@@ -55,7 +57,7 @@ def get_question():
             'source': question[3],
             'difficulty': question[4]
         }), 200
-    logger.warning("No questions available in the database")
+    logger.error("No questions available in the database")
     return jsonify({'error': 'No questions available'}), 404
 
 @app.route('/generate_question', methods=['POST'])

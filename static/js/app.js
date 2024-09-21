@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            console.log('Upload response:', data);
             if (data.error) {
                 showMessage(data.error, true);
             } else {
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Upload error:', error);
             showMessage('An error occurred while uploading the file.', true);
         });
     });
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
+                console.log('Get question response:', data);
                 questionDisplay.textContent = data.question;
                 answerDisplay.textContent = data.answer;
                 answerDisplay.style.display = 'none';
@@ -53,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('Question retrieved successfully');
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Get question error:', error);
                 showMessage(error.message, true);
             });
     });
@@ -75,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
+            console.log('Generate question response:', data);
             questionDisplay.textContent = data.question;
             answerDisplay.textContent = data.answer;
             answerDisplay.style.display = 'none';
@@ -82,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showMessage('Question generated successfully');
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Generate question error:', error);
             showMessage(error.message, true);
         });
     });
