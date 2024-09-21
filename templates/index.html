@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMAT Verbal Preparation Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>GMAT Verbal Preparation Tool</h1>
+        
+        <div class="section">
+            <h2>Upload PDF</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".pdf" required>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>Get Question</h2>
+            <button id="getQuestionBtn">Get Random Question</button>
+        </div>
+
+        <div class="section">
+            <h2>Generate Question</h2>
+            <select id="difficultySelect">
+                <option value="Easy">Easy</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+            <select id="typeSelect">
+                <option value="Critical Reasoning">Critical Reasoning</option>
+                <option value="Sentence Correction">Sentence Correction</option>
+                <option value="Reading Comprehension">Reading Comprehension</option>
+            </select>
+            <button id="generateQuestionBtn">Generate Question</button>
+        </div>
+
+        <div class="section">
+            <h2>Question</h2>
+            <div id="questionDisplay"></div>
+            <button id="showAnswerBtn" style="display:none;">Show Answer</button>
+            <div id="answerDisplay"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
