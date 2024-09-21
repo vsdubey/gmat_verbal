@@ -12,5 +12,5 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 SECRET_KEY = os.urandom(24)
 
 # Groq API configuration
-GROQ_API_KEY = 'your_groq_api_key_here'  # Replace with actual API key
+GROQ_API_KEY = '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'  # Replace with actual API key
 GROQ_API_URL = 'https://api.groq.com/v1/completions'
