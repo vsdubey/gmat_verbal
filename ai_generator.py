@@ -1,5 +1,4 @@
 import requests
-# from config import GROQ_API_KEY, GROQ_API_URL
 from groq import Groq
 
 groq_client2 = Groq(api_key="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")
