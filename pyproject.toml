@@ -11,6 +11,8 @@ flask = "^3.0.3"
 psycopg2-binary = "^2.9.9"
 pypdf2 = "^3.0.1"
 requests = "^2.32.3"
+openai = "^1.47.0"
+pdfminer-six = "^20240706"
 
 
 [build-system]

@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const questionDisplay = document.getElementById('questionDisplay');
     const answerDisplay = document.getElementById('answerDisplay');
     const messageDisplay = document.getElementById('messageDisplay');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchResults = document.getElementById('searchResults');
 
     function showMessage(message, isError = false) {
         messageDisplay.textContent = message;
@@ -48,11 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log('Get question response:', data);
-                questionDisplay.textContent = data.question;
-                answerDisplay.textContent = data.answer;
-                answerDisplay.style.display = 'none';
-                showAnswerBtn.style.display = 'block';
-                showMessage('Question retrieved successfully');
+                displayQuestion(data);
             })
             .catch(error => {
                 console.error('Get question error:', error);
@@ -78,11 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             console.log('Generate question response:', data);
-            questionDisplay.textContent = data.question;
-            answerDisplay.textContent = data.answer;
-            answerDisplay.style.display = 'none';
-            showAnswerBtn.style.display = 'block';
-            showMessage('Question generated successfully');
+            displayQuestion(data);
         })
         .catch(error => {
             console.error('Generate question error:', error);
@@ -90,8 +85,61 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    searchBtn.addEventListener('click', function() {
+        const query = searchInput.value.trim();
+        if (!query) {
+            showMessage('Please enter a search query', true);
+            return;
+        }
+        fetch('/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Search response:', data);
+            displaySearchResults(data);
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            showMessage('An error occurred while searching for questions.', true);
+        });
+    });
+
     showAnswerBtn.addEventListener('click', function() {
         answerDisplay.style.display = 'block';
         this.style.display = 'none';
     });
+
+    function displayQuestion(data) {
+        questionDisplay.textContent = data.question;
+        answerDisplay.textContent = data.answer;
+        answerDisplay.style.display = 'none';
+        showAnswerBtn.style.display = 'block';
+        showMessage('Question retrieved successfully');
+    }
+
+    function displaySearchResults(results) {
+        searchResults.innerHTML = '';
+        if (results.length === 0) {
+            searchResults.textContent = 'No results found.';
+            return;
+        }
+        const ul = document.createElement('ul');
+        results.forEach(result => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <strong>Question:</strong> ${result.question}<br>
+                <strong>Similarity:</strong> ${(result.similarity * 100).toFixed(2)}%<br>
+                <strong>Difficulty:</strong> ${result.difficulty}<br>
+                <strong>Source:</strong> ${result.source}
+            `;
+            li.addEventListener('click', () => displayQuestion(result));
+            ul.appendChild(li);
+        });
+        searchResults.appendChild(ul);
+    }
 });

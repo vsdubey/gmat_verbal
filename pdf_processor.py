@@ -1,4 +1,6 @@
-import PyPDF2
+import io
+from pdfminer.high_level import extract_text_to_fp
+from pdfminer.layout import LAParams
 import re
 import logging
 
@@ -10,11 +12,11 @@ def extract_questions_from_pdf(file_path):
     logger.info(f"Processing PDF file: {file_path}")
 
     try:
+        output_string = io.StringIO()
         with open(file_path, 'rb') as file:
-            reader = PyPDF2.PdfReader(file)
-            text = ""
-            for page in reader.pages:
-                text += page.extract_text()
+            extract_text_to_fp(file, output_string, laparams=LAParams(), output_type='text', codec='utf-8')
+        
+        text = output_string.getvalue()
 
         logger.info(f"Extracted {len(text)} characters from the PDF")
         logger.info(f"First 1000 characters of extracted text: {text[:1000]}")

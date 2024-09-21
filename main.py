@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
 import os
 import logging
-from database import init_db, add_question, get_random_question, save_generated_question
+from database import init_db, add_question, get_random_question, save_generated_question, get_similar_questions
 from pdf_processor import extract_questions_from_pdf
 from ai_generator import generate_question
+from embeddings import generate_embedding
 from config import SECRET_KEY
 
 app = Flask(__name__)
@@ -77,6 +78,31 @@ def generate_new_question():
             }), 201
     logger.error("Failed to generate or save question")
     return jsonify({'error': 'Failed to generate question'}), 500
+
+@app.route('/search', methods=['POST'])
+def search_questions():
+    query = request.json.get('query')
+    if not query:
+        return jsonify({'error': 'No search query provided'}), 400
+    
+    query_embedding = generate_embedding(query)
+    if not query_embedding:
+        return jsonify({'error': 'Failed to generate embedding for search query'}), 500
+    
+    similar_questions = get_similar_questions(query_embedding)
+    results = [
+        {
+            'id': q[0],
+            'question': q[1],
+            'answer': q[2],
+            'source': q[3],
+            'difficulty': q[4],
+            'similarity': 1 - q[5]  # Convert distance to similarity
+        }
+        for q in similar_questions
+    ]
+    
+    return jsonify(results), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
